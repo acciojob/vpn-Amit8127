@@ -33,9 +33,9 @@ public class ConnectionServiceImpl implements ConnectionService {
         User user = userRepository2.findById(userId).get();
         countryName = countryName.toUpperCase();
 
-        if(user.isConnected()) {
+        if(user.getConnected()) {
             throw new Exception("Already connected");
-        } else if(user.getCountry().getCountryName().toString().equals(countryName)){
+        } else if(user.getOriginalCountry().getCountryName().toString().equals(countryName)){
             return user;
         } else {
             if(user.getServiceProviderList().size() == 0) {
@@ -82,7 +82,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         //Else, disconnect from vpn, make masked Ip as null, update relevant attributes and return updated user.
         User user = userRepository2.findById(userId).get();
 
-        if(!user.isConnected()) {
+        if(!user.getConnected()) {
             throw new Exception("Already disconnected");
         }
         user.setConnected(Boolean.FALSE);
