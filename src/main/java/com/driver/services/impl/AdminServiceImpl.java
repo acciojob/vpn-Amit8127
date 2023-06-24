@@ -39,8 +39,6 @@ public class AdminServiceImpl implements AdminService {
         serviceProvider.setAdmin(admin);
         serviceProvider.setName(providerName);
 
-        serviceProviderRepository1.save(serviceProvider);
-
         admin.getServiceProviders().add(serviceProvider);
         adminRepository1.save(admin);
 
@@ -59,18 +57,13 @@ public class AdminServiceImpl implements AdminService {
         Country country = new Country();
 
         countryName = countryName.toUpperCase();
-        if(countryName.length() == 3) {
-            if(countryName.equals("IND") || countryName.equals("AUS") || countryName.equals("USA") || countryName.equals("CHI") || countryName.equals("JPN")) {
-                country.setCountryName(CountryName.valueOf(countryName));
-                country.setCode(CountryName.valueOf(countryName).toCode());
-            } else {
-                throw new Exception("Country not found");
-            }
+        if(countryName.equals("IND") || countryName.equals("AUS") || countryName.equals("USA") || countryName.equals("CHI") || countryName.equals("JPN")) {
+            country.setCountryName(CountryName.valueOf(countryName));
+            country.setCode(CountryName.valueOf(countryName).toCode());
         } else {
             throw new Exception("Country not found");
         }
         country.setServiceProvider(serviceProvider);
-        countryRepository1.save(country);
         serviceProvider.getCountryList().add(country);
 
         serviceProviderRepository1.save(serviceProvider);

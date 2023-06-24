@@ -33,13 +33,9 @@ public class UserServiceImpl implements UserService {
         user.setPassword(password);
 
         countryName = countryName.toUpperCase();
-        if(countryName.length() == 3) {
-            if(countryName.equals("IND") || countryName.equals("AUS") || countryName.equals("USA") || countryName.equals("CHI") || countryName.equals("JPN")) {
-                country.setCountryName(CountryName.valueOf(countryName));
-                country.setCode(CountryName.valueOf(countryName).toCode());
-            } else {
-                throw new Exception("Country not found");
-            }
+        if(countryName.equals("IND") || countryName.equals("AUS") || countryName.equals("USA") || countryName.equals("CHI") || countryName.equals("JPN")) {
+            country.setCountryName(CountryName.valueOf(countryName));
+            country.setCode(CountryName.valueOf(countryName).toCode());
         } else {
             throw new Exception("Country not found");
         }
@@ -52,9 +48,7 @@ public class UserServiceImpl implements UserService {
 
         user.setOriginalIp(country.getCode()+"."+userRepository3.save(user).getId());
 
-        countryRepository3.save(country);
         userRepository3.save(user);
-
 
         return user;
     }
