@@ -104,57 +104,40 @@ public class ConnectionServiceImpl implements ConnectionService {
         User sender = userRepository2.findById(senderId).get();
         User receiver = userRepository2.findById(receiverId).get();
 
-        if (receiver.getConnected()) {
-            if (!sender.getOriginalCountry().equals(receiver.getOriginalCountry())) {
-                connect(senderId, receiver.getOriginalCountry().getCountryName().toString());
-            }
-        } else {
-            if (!sender.getOriginalCountry().equals(receiver.getOriginalCountry())) {
-                connect(senderId, receiver.getOriginalCountry().getCountryName().toString());
+        String countryName = "";
+
+        if(receiver.getMaskedIp() != null){
+            String countryCode = receiver.getMaskedIp().substring(0,3); // getting markedId country code
+
+            if(countryCode.equals(sender.getOriginalCountry().getCode()))
+                return sender;
+            else {
+
+                if (countryCode.equalsIgnoreCase(CountryName.IND.toCode()))
+                    countryName = CountryName.IND.toString();
+                if (countryCode.equalsIgnoreCase(CountryName.USA.toCode()))
+                    countryName = CountryName.USA.toString();
+                if (countryCode.equalsIgnoreCase(CountryName.JPN.toCode()))
+                    countryName = CountryName.JPN.toString();
+                if (countryCode.equalsIgnoreCase(CountryName.CHI.toCode()))
+                    countryName = CountryName.CHI.toString();
+                if (countryCode.equalsIgnoreCase(CountryName.AUS.toCode()))
+                    countryName = CountryName.AUS.toString();
             }
         }
+        else{
+            if(receiver.getOriginalCountry().equals(sender.getOriginalCountry())){
+                return sender;
+            }
+            countryName = receiver.getOriginalCountry().getCountryName().toString();
+        }
 
-        if (sender.getOriginalCountry().equals(receiver.getOriginalCountry()) ||
-                sender.getOriginalCountry().equals(receiver.getOriginalCountry())) {
-            return sender;
-        } else {
+        User newUser =  connect(senderId,countryName);
+        if (!newUser.getConnected()){
             throw new Exception("Cannot establish communication");
         }
-
-//        String countryName = "";
-//
-//        if(!receiver.getConnected()){
-//            String countryCode = receiver.getOriginalCountry().getCode();
-//
-//            if(countryCode.equals(sender.getOriginalCountry().getCode())) {
-//                return sender;
-//            } else {
-//
-//                if (countryCode.equals(CountryName.IND.toCode()))
-//                    countryName = CountryName.IND.toString();
-//                if (countryCode.equals(CountryName.USA.toCode()))
-//                    countryName = CountryName.USA.toString();
-//                if (countryCode.equals(CountryName.JPN.toCode()))
-//                    countryName = CountryName.JPN.toString();
-//                if (countryCode.equals(CountryName.CHI.toCode()))
-//                    countryName = CountryName.CHI.toString();
-//                if (countryCode.equals(CountryName.AUS.toCode()))
-//                    countryName = CountryName.AUS.toString();
-//            }
-//        }
-//        else {
-//            if (receiver.getOriginalCountry().equals(sender.getOriginalCountry())) {
-//                return sender;
-//            }
-//            countryName = receiver.getOriginalCountry().getCountryName().toString();
-//        }
-//
-//        User newUser =  connect(senderId,countryName);
-//        if (!newUser.getConnected()){
-//            throw new Exception("Cannot establish communication");
-//        }
-//        else {
-//            return newUser;
-//        }
+        else {
+            return newUser;
+        }
     }
 }
