@@ -105,7 +105,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         String countryName = "";
 
-        if(!receiver.getConnected()){
+        if(receiver.getMaskedIp() != null){
             String countryCode = receiver.getOriginalCountry().getCode();
 
             if(countryCode.equals(sender.getOriginalCountry().getCode())) {
