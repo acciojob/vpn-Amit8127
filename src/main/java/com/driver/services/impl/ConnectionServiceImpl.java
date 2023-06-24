@@ -102,6 +102,6 @@ public class ConnectionServiceImpl implements ConnectionService {
         //If communication can not be established due to any reason, throw "Cannot establish communication" exception
         User user = new User();
         user.setId(1);
-        return new User();
+        return user;
     }
 }
