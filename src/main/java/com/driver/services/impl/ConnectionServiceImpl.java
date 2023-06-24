@@ -100,38 +100,49 @@ public class ConnectionServiceImpl implements ConnectionService {
         //The sender is initially not connected to any vpn. If the sender's original country does not match receiver's current country, we need to connect the sender to a suitable vpn. If there are multiple options, connect using the service provider having smallest id
         //If the sender's original country matches receiver's current country, we do not need to do anything as they can communicate. Return the sender as it is.
         //If communication can not be established due to any reason, throw "Cannot establish communication" exception
-        User sender = userRepository2.findById(senderId).get();
-        User receiver = userRepository2.findById(receiverId).get();
+        User user = userRepository2.findById(senderId).get();
+        User user1 = userRepository2.findById(receiverId).get();
 
-        String countryName = "";
+        if(user1.getMaskedIp()!=null){
+            String str = user1.getMaskedIp();
+            String cc = str.substring(0,3); //chopping country code = cc
 
-        if (!receiver.getConnected()) {
-            String countryCode = receiver.getOriginalCountry().getCode();
+            if(cc.equals(user.getOriginalCountry().getCode()))
+                return user;
+            else {
+                String countryName = "";
 
-            if (countryCode.equals(sender.getOriginalCountry().getCode())) {
-                return sender;
-            } else {
-                // we are trying to get countryName by countryCode
-                if (countryCode.equals(CountryName.IND.toCode()))
+                if (cc.equalsIgnoreCase(CountryName.IND.toCode()))
                     countryName = CountryName.IND.toString();
-                if (countryCode.equals(CountryName.USA.toCode()))
+                if (cc.equalsIgnoreCase(CountryName.USA.toCode()))
                     countryName = CountryName.USA.toString();
-                if (countryCode.equals(CountryName.JPN.toCode()))
+                if (cc.equalsIgnoreCase(CountryName.JPN.toCode()))
                     countryName = CountryName.JPN.toString();
-                if (countryCode.equals(CountryName.CHI.toCode()))
+                if (cc.equalsIgnoreCase(CountryName.CHI.toCode()))
                     countryName = CountryName.CHI.toString();
-                if (countryCode.equals(CountryName.AUS.toCode()))
+                if (cc.equalsIgnoreCase(CountryName.AUS.toCode()))
                     countryName = CountryName.AUS.toString();
+
+                User user2 = connect(senderId,countryName);
+                if (!user2.getConnected()){
+                    throw new Exception("Cannot establish communication");
+
+                }
+                else return user2;
             }
-        } else {
-            if (receiver.getOriginalCountry().equals(sender.getOriginalCountry())) {
-                return sender;
-            }
+
         }
-        countryName = receiver.getOriginalCountry().getCountryName().toString();
-        User newUser = connect(senderId, countryName);
-        if (!newUser.getConnected()) {
-            throw new Exception("Cannot establish communication");
-        } else return newUser;
+        else{
+            if(user1.getOriginalCountry().equals(user.getOriginalCountry())){
+                return user;
+            }
+            String countryName = user1.getOriginalCountry().getCountryName().toString();
+            User user2 =  connect(senderId,countryName);
+            if (!user2.getConnected()){
+                throw new Exception("Cannot establish communication");
+            }
+            else return user2;
+
+        }
     }
 }
