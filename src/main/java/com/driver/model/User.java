@@ -18,7 +18,7 @@ public class User {
     private String password;
     private String originalIp;
     private String maskedIp;
-    private Boolean connected;
+    private Boolean connected = false;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Country originalCountry;
